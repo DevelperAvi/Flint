@@ -94,10 +94,14 @@ export async function mediaRoutes(fastify: FastifyInstance): Promise<void> {
         return reply.send({ data: result });
       }
 
-      // Offline dev mode fallback: provide direct API upload URL
+      // Direct API upload fallback (when external S3/MinIO is not connected)
+      const host = (request.headers['x-forwarded-host'] as string) || request.headers.host || request.hostname;
+      const proto = (request.headers['x-forwarded-proto'] as string) || request.protocol;
+      const baseUrl = `${proto}://${host}`;
+
       const key = `${folder}/${userId}/${randomUUID()}.${ext}`;
-      const uploadUrl = `http://localhost:3001/api/v1/media/upload-direct?key=${encodeURIComponent(key)}`;
-      const publicUrl = `http://localhost:3001/uploads/${key}`;
+      const uploadUrl = `${baseUrl}/api/v1/media/upload-direct?key=${encodeURIComponent(key)}`;
+      const publicUrl = `${baseUrl}/uploads/${key}`;
 
       return reply.send({
         data: {
@@ -131,10 +135,14 @@ export async function mediaRoutes(fastify: FastifyInstance): Promise<void> {
       await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
       await fs.promises.writeFile(targetPath, request.body as Buffer);
 
+      const host = (request.headers['x-forwarded-host'] as string) || request.headers.host || request.hostname;
+      const proto = (request.headers['x-forwarded-proto'] as string) || request.protocol;
+      const baseUrl = `${proto}://${host}`;
+
       return reply.status(200).send({
         success: true,
         key: normalizedKey,
-        publicUrl: `http://localhost:3001/uploads/${normalizedKey}`,
+        publicUrl: `${baseUrl}/uploads/${normalizedKey}`,
       });
     }
   );

@@ -8,6 +8,8 @@ const nextConfig = {
       { protocol: 'https', hostname: '*.unsplash.com' },
       { protocol: 'https', hostname: '*.r2.cloudflarestorage.com' },
       { protocol: 'https', hostname: '*.cloudflare.com' },
+      { protocol: 'https', hostname: '*.onrender.com' },
+      { protocol: 'https', hostname: 'flint-qmxy.onrender.com' },
       { protocol: 'http', hostname: 'localhost' },
       { protocol: 'http', hostname: 'minio' },
     ],

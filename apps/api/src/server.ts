@@ -21,6 +21,7 @@ import { notificationRoutes } from './modules/notification/notification.routes';
 import { errorHandler } from './middleware/error-handler';
 
 const app = Fastify({
+  bodyLimit: 50 * 1024 * 1024, // 50MB limit for media uploads
   logger: {
     level: env.LOG_LEVEL,
     transport:

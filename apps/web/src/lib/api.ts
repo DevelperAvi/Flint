@@ -123,17 +123,38 @@ export const flintApi = {
   },
 
   media: {
-    getUploadUrl: (mimeType: string, folder = 'posts') =>
-      api.get<{ data: { uploadUrl: string; key: string; publicUrl: string; expiresIn: number } }>(
+    getUploadUrl: async (mimeType: string, folder = 'posts') => {
+      const res = await api.get<{ data: { uploadUrl: string; key: string; publicUrl: string; expiresIn: number } }>(
         `/api/v1/media/upload-url?mimeType=${encodeURIComponent(mimeType)}&folder=${folder}`
-      ),
-    uploadToS3: (uploadUrl: string, file: File, onProgress?: (pct: number) => void) =>
-      axios.put(uploadUrl, file, {
+      );
+      if (process.env.NODE_ENV !== 'development' && res.data?.data) {
+        if (res.data.data.uploadUrl?.includes('localhost:3001')) {
+          res.data.data.uploadUrl = res.data.data.uploadUrl.replace(
+            'http://localhost:3001',
+            'https://flint-qmxy.onrender.com'
+          );
+        }
+        if (res.data.data.publicUrl?.includes('localhost:3001')) {
+          res.data.data.publicUrl = res.data.data.publicUrl.replace(
+            'http://localhost:3001',
+            'https://flint-qmxy.onrender.com'
+          );
+        }
+      }
+      return res;
+    },
+    uploadToS3: (uploadUrl: string, file: File, onProgress?: (pct: number) => void) => {
+      const effectiveUrl =
+        process.env.NODE_ENV !== 'development' && uploadUrl.includes('localhost:3001')
+          ? uploadUrl.replace('http://localhost:3001', 'https://flint-qmxy.onrender.com')
+          : uploadUrl;
+      return axios.put(effectiveUrl, file, {
         headers: { 'Content-Type': file.type },
         onUploadProgress: (evt) => {
           if (evt.total) onProgress?.(Math.round((evt.loaded / evt.total) * 100));
         },
-      }),
+      });
+    },
   },
 
   feed: {
