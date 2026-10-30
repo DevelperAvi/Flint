@@ -18,12 +18,15 @@ ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 flint
-USER flint
 
 COPY --from=build --chown=flint:nodejs /app/dist ./dist
 COPY --from=build --chown=flint:nodejs /app/node_modules ./node_modules
 COPY --from=build --chown=flint:nodejs /app/prisma ./prisma
 COPY --from=build --chown=flint:nodejs /app/package.json ./
+
+RUN mkdir -p /app/uploads && chown -R flint:nodejs /app
+
+USER flint
 
 EXPOSE 3001
 ENV PORT=3001

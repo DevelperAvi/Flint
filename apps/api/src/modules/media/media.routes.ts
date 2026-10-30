@@ -5,6 +5,7 @@ import { env } from '../../config/env';
 import { randomUUID } from 'crypto';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import {
   generatePresignedUploadUrl,
   isAllowedMimeType,
@@ -21,10 +22,23 @@ const uploadUrlQuerySchema = z.object({
   folder: z.enum(['posts', 'avatars', 'stories', 'thumbnails']).default('posts'),
 });
 
+function getUploadsDir(): string {
+  const localDir = path.resolve(process.cwd(), 'uploads');
+  try {
+    fs.mkdirSync(localDir, { recursive: true });
+    fs.accessSync(localDir, fs.constants.W_OK);
+    return localDir;
+  } catch {
+    const tmpDir = path.join(os.tmpdir(), 'flint-uploads');
+    fs.mkdirSync(tmpDir, { recursive: true });
+    return tmpDir;
+  }
+}
+
 export async function mediaRoutes(fastify: FastifyInstance): Promise<void> {
   // Support binary buffer uploads for direct local dev uploads
   fastify.addContentTypeParser(
-    ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm', 'application/octet-stream'],
+    /^image\/|^video\/|^application\/octet-stream/,
     { parseAs: 'buffer' },
     (_req, body, done) => {
       done(null, body);
@@ -122,28 +136,50 @@ export async function mediaRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.put(
     '/upload-direct',
     async (request: FastifyRequest<{ Querystring: { key?: string } }>, reply: FastifyReply) => {
-      const key = request.query.key;
-      if (!key) {
-        return reply.status(400).send({ error: 'BadRequest', message: 'Missing key parameter' });
+      try {
+        const key = request.query.key;
+        if (!key) {
+          return reply.status(400).send({ error: 'BadRequest', message: 'Missing key parameter' });
+        }
+
+        const normalizedKey = key.replace(/\\/g, '/').replace(/^\/+/, '');
+        const uploadsDir = getUploadsDir();
+        const parts = normalizedKey.split('/').filter(Boolean);
+        const targetPath = path.join(uploadsDir, ...parts);
+
+        await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
+
+        let fileBuffer: Buffer;
+        if (Buffer.isBuffer(request.body)) {
+          fileBuffer = request.body;
+        } else if (typeof request.body === 'string') {
+          fileBuffer = Buffer.from(request.body, 'binary');
+        } else if (request.body && typeof request.body === 'object') {
+          if (request.body instanceof Uint8Array) {
+            fileBuffer = Buffer.from(request.body);
+          } else {
+            fileBuffer = Buffer.from(JSON.stringify(request.body));
+          }
+        } else {
+          fileBuffer = Buffer.from([]);
+        }
+
+        await fs.promises.writeFile(targetPath, fileBuffer);
+
+        const host = (request.headers['x-forwarded-host'] as string) || request.headers.host || request.hostname;
+        const proto = (request.headers['x-forwarded-proto'] as string) || request.protocol;
+        const baseUrl = `${proto}://${host}`;
+
+        return reply.status(200).send({
+          success: true,
+          key: normalizedKey,
+          publicUrl: `${baseUrl}/uploads/${normalizedKey}`,
+        });
+      } catch (err: unknown) {
+        request.log.error(err, 'Failed to save direct upload');
+        const message = err instanceof Error ? err.message : 'Unknown upload error';
+        return reply.status(500).send({ error: 'UploadFailed', message });
       }
-
-      const normalizedKey = key.replace(/\\/g, '/').replace(/^\/+/, '');
-      const uploadsDir = path.resolve(process.cwd(), 'uploads');
-      const parts = normalizedKey.split('/').filter(Boolean);
-      const targetPath = path.join(uploadsDir, ...parts);
-
-      await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
-      await fs.promises.writeFile(targetPath, request.body as Buffer);
-
-      const host = (request.headers['x-forwarded-host'] as string) || request.headers.host || request.hostname;
-      const proto = (request.headers['x-forwarded-proto'] as string) || request.protocol;
-      const baseUrl = `${proto}://${host}`;
-
-      return reply.status(200).send({
-        success: true,
-        key: normalizedKey,
-        publicUrl: `${baseUrl}/uploads/${normalizedKey}`,
-      });
     }
   );
 }

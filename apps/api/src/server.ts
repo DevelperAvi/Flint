@@ -2,6 +2,7 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { fastifyJwt } from '@fastify/jwt';
 import { fastifyCors } from '@fastify/cors';
 import { fastifyHelmet } from '@fastify/helmet';
@@ -88,6 +89,15 @@ async function buildApp() {
     }
   });
 
+  // Support binary buffer uploads for media uploads
+  app.addContentTypeParser(
+    /^image\/|^video\/|^application\/octet-stream/,
+    { parseAs: 'buffer' },
+    (_req, body, done) => {
+      done(null, body);
+    }
+  );
+
   await app.register(fastifyRateLimit, {
     global: true,
     max: 200,
@@ -148,10 +158,15 @@ async function buildApp() {
   app.get('/uploads/*', async (request, reply) => {
     const wildcard = (request.params as { '*': string })['*'];
     const parts = wildcard.split(/[\/\\]/).filter(Boolean);
-    const uploadsDir = path.resolve(process.cwd(), 'uploads');
-    const safePath = path.join(uploadsDir, ...parts);
+    const localUploadsDir = path.resolve(process.cwd(), 'uploads');
+    const tmpUploadsDir = path.join(os.tmpdir(), 'flint-uploads');
+    let safePath = path.join(localUploadsDir, ...parts);
 
-    if (!safePath.startsWith(uploadsDir)) {
+    if (!fs.existsSync(safePath)) {
+      safePath = path.join(tmpUploadsDir, ...parts);
+    }
+
+    if (!safePath.startsWith(localUploadsDir) && !safePath.startsWith(tmpUploadsDir)) {
       return reply.status(403).send({ error: 'Forbidden' });
     }
 
