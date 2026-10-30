@@ -120,7 +120,14 @@ async function buildApp() {
   // ── Error handler ─────────────────────────────────────────────────────────
   app.setErrorHandler(errorHandler);
 
-  // ── Health check ─────────────────────────────────────────────────────────
+  // ── Root info & Health check ─────────────────────────────────────────────
+  app.get('/', async () => ({
+    name: 'Flint API',
+    status: 'online',
+    version: '1.0.0',
+    health: '/health',
+  }));
+
   app.get('/health', async () => ({
     status: 'ok',
     timestamp: new Date().toISOString(),
