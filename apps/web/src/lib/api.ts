@@ -1,8 +1,19 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { AUTH_STORAGE_KEYS, clearAuthTokens, storeAuthTokens } from '@/store/auth.store';
 
+const getBaseUrl = (): string => {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (process.env.NODE_ENV === 'development') {
+    return envUrl ?? 'http://localhost:3001';
+  }
+  if (!envUrl || envUrl.includes('flint-api.onrender.com')) {
+    return 'https://flint-qmxy.onrender.com';
+  }
+  return envUrl;
+};
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+  baseURL: getBaseUrl(),
   timeout: 15_000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: false,
