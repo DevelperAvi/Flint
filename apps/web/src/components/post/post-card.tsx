@@ -13,6 +13,7 @@ import { cn, formatRelativeTime, formatCount, getAspectRatioClass, truncateText 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { flintApi } from '@/lib/api';
 import { useAuthStore } from '@/store/auth.store';
+import { toast } from '@/components/ui/toaster';
 
 export interface PostData {
   id: string;
@@ -138,6 +139,35 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
       setIsSaved(prevSaved);
     }
   }, [isAuthenticated, isSaved, post.id]);
+
+  const handleShare = useCallback(async () => {
+    const postUrl = typeof window !== 'undefined' ? `${window.location.origin}/p/${post.id}` : '';
+    const shareData = {
+      title: `Post by ${post.user.displayName || post.user.username} on Flint`,
+      text: post.caption || 'Check out this post on Flint 🔥',
+      url: postUrl,
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(postUrl);
+        toast({ title: 'Link copied to clipboard! 📋', variant: 'success' });
+      } else {
+        toast({ title: 'Sharing not supported on this browser', variant: 'error' });
+      }
+    } catch {
+      toast({ title: 'Failed to copy link', variant: 'error' });
+    }
+  }, [post.id, post.caption, post.user.displayName, post.user.username]);
 
   const caption = post.caption ?? '';
   const shouldTruncate = caption.length > 125;
@@ -295,6 +325,7 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
 
             {/* Share */}
             <button
+              onClick={handleShare}
               className="flex items-center gap-1.5 p-2.5 sm:p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors touch-manipulation"
               aria-label="Share post"
               id={`share-btn-${post.id}`}

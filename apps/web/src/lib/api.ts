@@ -201,4 +201,17 @@ export const flintApi = {
     readAll: () => api.post('/api/v1/notifications/read-all'),
     unreadCount: () => api.get('/api/v1/notifications/unread-count'),
   },
+
+  stories: {
+    list: () => api.get('/api/v1/stories'),
+    create: (body: {
+      mediaUrl: string;
+      mediaType?: 'IMAGE' | 'VIDEO';
+      duration?: number;
+      filter?: string;
+      musicTrack?: { id: string; title: string; artist: string; audioUrl?: string };
+      caption?: string;
+    }) => api.post('/api/v1/stories', body),
+    delete: (id: string) => api.delete(`/api/v1/stories/${id}`),
+  },
 };

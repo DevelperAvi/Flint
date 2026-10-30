@@ -8,3 +8,6 @@ coverage
 Thumbs.db
 .turbo
 *.local
+*.apk
+local.properties
+

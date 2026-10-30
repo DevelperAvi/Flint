@@ -1,0 +1,14 @@
+{
+  "appId": "com.flint.app",
+  "appName": "Flint",
+  "webDir": "public",
+  "server": {
+    "url": "https://flint-three-gray.vercel.app",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "webContentsDebuggingEnabled": true
+  }
+}
+

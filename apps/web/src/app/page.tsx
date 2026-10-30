@@ -7,6 +7,7 @@ import { Loader2, Flame, Sparkles } from 'lucide-react';
 import { PostCard } from '@/components/post/post-card';
 import { Sidebar } from '@/components/layout/sidebar';
 import { PostDetailModal } from '@/components/modals/post-detail-modal';
+import { StoriesBar } from '@/components/story/stories-bar';
 import { useFeed } from '@/hooks/use-feed';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -95,27 +96,6 @@ export default function HomePage() {
   );
 }
 
-function StoriesBar() {
-  return (
-    <div className="flex gap-3 px-1 py-4 overflow-x-auto scrollbar-hide">
-      {Array.from({ length: 7 }).map((_, i) => (
-        <div key={i} className="flex flex-col items-center gap-1.5 flex-shrink-0">
-          <div
-            className="w-14 h-14 rounded-full p-[2px]"
-            style={{
-              background: i === 0 ? '#e5e7eb' : 'linear-gradient(135deg, #f97316, #e11d48)',
-            }}
-          >
-            <div className="w-full h-full rounded-full bg-secondary" />
-          </div>
-          <span className="text-[11px] text-muted-foreground w-14 text-center truncate">
-            {i === 0 ? 'Your story' : `user_${i}`}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function FeedSkeleton() {
   return (

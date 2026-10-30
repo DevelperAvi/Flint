@@ -113,6 +113,7 @@ const comments = new Map<string, DevComment>();
 const notifications: DevNotification[] = [];
 const refreshTokens = new Map<string, { userId: string; expiresAt: Date }>();
 const follows = new Set<string>();
+const stories: any[] = [];
 
 // Seed default accounts
 let isInitialized = false;
@@ -598,6 +599,61 @@ export const devStore = {
       }
     }
     return result;
+  },
+
+  createStory(userId: string, data: any): any {
+    const user = users.get(userId);
+    const story = {
+      id: `story_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId,
+      mediaUrl: data.mediaUrl,
+      mediaType: data.mediaType ?? 'IMAGE',
+      duration: data.duration ?? 5,
+      viewsCount: 0,
+      createdAt: new Date().toISOString(),
+      expiresAt: data.expiresAt,
+      filter: data.metadata?.filter ?? 'normal',
+      musicTrack: data.metadata?.musicTrack,
+      caption: data.metadata?.caption,
+      user: user
+        ? {
+            id: user.id,
+            username: user.username,
+            displayName: user.displayName,
+            avatarUrl: user.avatarUrl,
+            isVerified: user.isVerified ?? false,
+          }
+        : { id: userId, username: 'anonymous' },
+    };
+
+    let userStories = stories.find((s) => s.user.id === userId);
+    if (!userStories) {
+      userStories = { user: story.user, stories: [] };
+      stories.unshift(userStories);
+    }
+    userStories.stories.unshift(story);
+    return story;
+  },
+
+  getActiveStories(): any[] {
+    const now = Date.now();
+    return stories
+      .map((userGroup) => ({
+        ...userGroup,
+        stories: userGroup.stories.filter(
+          (s: any) => new Date(s.expiresAt).getTime() > now
+        ),
+      }))
+      .filter((userGroup) => userGroup.stories.length > 0);
+  },
+
+  deleteStory(userId: string, storyId: string): { success: boolean } {
+    for (const userGroup of stories) {
+      if (userGroup.user.id === userId) {
+        userGroup.stories = userGroup.stories.filter((s: any) => s.id !== storyId);
+      }
+    }
+    return { success: true };
   },
 };
 

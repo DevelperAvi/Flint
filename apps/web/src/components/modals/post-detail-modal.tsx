@@ -130,11 +130,26 @@ export function PostDetailContent({ postId }: { postId: string }) {
     },
   });
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const url = typeof window !== 'undefined' ? `${window.location.origin}/p/${postId}` : '';
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      toast({ title: 'Link copied to clipboard!', variant: 'success' });
+    const shareData = {
+      title: 'Flint Post',
+      text: post?.caption || 'Check out this post on Flint 🔥',
+      url,
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      toast({ title: 'Link copied to clipboard! 📋', variant: 'success' });
     }
   };
 

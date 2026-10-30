@@ -19,6 +19,7 @@ import { feedRoutes } from './modules/feed/feed.routes';
 import { mediaRoutes } from './modules/media/media.routes';
 import { exploreRoutes } from './modules/explore/explore.routes';
 import { notificationRoutes } from './modules/notification/notification.routes';
+import { storyRoutes } from './modules/story/story.routes';
 import { errorHandler } from './middleware/error-handler';
 
 const app = Fastify({
@@ -155,6 +156,7 @@ async function buildApp() {
   await app.register(mediaRoutes,        { prefix: '/api/v1/media' });
   await app.register(exploreRoutes,      { prefix: '/api/v1/explore' });
   await app.register(notificationRoutes, { prefix: '/api/v1/notifications' });
+  await app.register(storyRoutes,        { prefix: '/api/v1/stories' });
 
   // ── Static uploaded media (dev fallback) ──────────────────────────────────
   app.get('/uploads/*', async (request, reply) => {
