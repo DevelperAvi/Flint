@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
@@ -17,10 +18,30 @@ import { PostDetailModal } from '@/components/modals/post-detail-modal';
 const POPULAR_TAGS = ['all', 'photography', 'art', 'design', 'minimalism', 'travel', 'nature', 'vibes'];
 
 export default function ExplorePage() {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [selectedTag, setSelectedTag] = useState('all');
+  return (
+    <Suspense fallback={<div className="max-w-5xl mx-auto p-8 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>}>
+      <ExploreContent />
+    </Suspense>
+  );
+}
+
+function ExploreContent() {
+  const searchParams = useSearchParams();
+  const urlTag = searchParams.get('tag');
+  const urlQuery = searchParams.get('q');
+
+  const [query, setQuery] = useState(urlQuery ?? '');
+  const [debouncedQuery, setDebouncedQuery] = useState(urlQuery ?? '');
+  const [selectedTag, setSelectedTag] = useState(urlTag ?? 'all');
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (urlTag) setSelectedTag(urlTag);
+    if (urlQuery) {
+      setQuery(urlQuery);
+      setDebouncedQuery(urlQuery);
+    }
+  }, [urlTag, urlQuery]);
 
   // Debounce search query
   useEffect(() => {
