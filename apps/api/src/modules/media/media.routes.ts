@@ -36,15 +36,6 @@ function getUploadsDir(): string {
 }
 
 export async function mediaRoutes(fastify: FastifyInstance): Promise<void> {
-  // Support binary buffer uploads for direct local dev uploads
-  fastify.addContentTypeParser(
-    /^image\/|^video\/|^application\/octet-stream/,
-    { parseAs: 'buffer' },
-    (_req, body, done) => {
-      done(null, body);
-    }
-  );
-
   /**
    * GET /api/v1/media/upload-url
    *
