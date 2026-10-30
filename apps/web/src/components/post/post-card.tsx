@@ -263,7 +263,7 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
               onClick={handleLikeToggle}
               whileTap={{ scale: 0.85 }}
               className={cn(
-                'flex items-center gap-1.5 p-2 rounded-xl transition-colors',
+                'flex items-center gap-1.5 p-2.5 sm:p-2 rounded-xl transition-colors touch-manipulation',
                 isLiked
                   ? 'text-red-500 hover:bg-red-500/10'
                   : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
@@ -286,7 +286,7 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
             {/* Comment */}
             <button
               onClick={onCommentClick}
-              className="flex items-center gap-1.5 p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="flex items-center gap-1.5 p-2.5 sm:p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors touch-manipulation"
               aria-label="Comment on post"
               id={`comment-btn-${post.id}`}
             >
@@ -295,7 +295,7 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
 
             {/* Share */}
             <button
-              className="flex items-center gap-1.5 p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="flex items-center gap-1.5 p-2.5 sm:p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors touch-manipulation"
               aria-label="Share post"
               id={`share-btn-${post.id}`}
             >
@@ -306,7 +306,7 @@ export function PostCard({ post, onCommentClick, priority = false }: PostCardPro
           {/* Bookmark */}
           <button
             className={cn(
-              'p-2 rounded-xl transition-colors',
+              'p-2.5 sm:p-2 rounded-xl transition-colors touch-manipulation',
               isSaved
                 ? 'text-primary hover:bg-primary/10'
                 : 'text-muted-foreground hover:text-foreground hover:bg-secondary'

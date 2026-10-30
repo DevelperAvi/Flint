@@ -28,13 +28,14 @@ export function PostDetailModal({ postId, open, onClose }: PostDetailModalProps)
   return (
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 animate-fade-in" />
-        <Dialog.Content className="fixed inset-4 sm:inset-10 lg:inset-x-24 lg:inset-y-12 z-50 flex items-center justify-center pointer-events-none">
-          <div className="relative w-full max-w-5xl h-full max-h-[90vh] bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row pointer-events-auto">
+        <Dialog.Overlay className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 animate-fade-in" />
+        <Dialog.Content className="fixed inset-2 sm:inset-6 lg:inset-x-24 lg:inset-y-10 z-50 flex items-center justify-center pointer-events-none">
+          <div className="relative w-full max-w-5xl h-full max-h-[94vh] bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col lg:flex-row pointer-events-auto">
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-20 glass w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute top-3 right-3 z-30 glass-strong w-9 h-9 rounded-full flex items-center justify-center text-foreground hover:bg-secondary transition-colors shadow-lg touch-manipulation"
+              aria-label="Close"
             >
               <X className="w-5 h-5" />
             </button>
@@ -163,9 +164,9 @@ export function PostDetailContent({ postId }: { postId: string }) {
   const comments = commentsData?.items ?? [];
 
   return (
-    <div className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-hidden">
+    <div className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-y-auto lg:overflow-hidden">
       {/* ── Media Side (Left) ─────────────────────────────────────────── */}
-      <div className="lg:flex-1 bg-black flex items-center justify-center relative min-h-[300px] lg:min-h-0 overflow-hidden select-none">
+      <div className="w-full lg:flex-1 bg-black flex items-center justify-center relative min-h-[260px] sm:min-h-[320px] max-h-[46vh] lg:max-h-none lg:min-h-0 overflow-hidden select-none flex-shrink-0">
         {post.mediaType === 'IMAGE' ? (
           <Image
             src={post.mediaUrl}
@@ -189,7 +190,7 @@ export function PostDetailContent({ postId }: { postId: string }) {
       </div>
 
       {/* ── Content & Comments Side (Right) ────────────────────────────── */}
-      <div className="w-full lg:w-[420px] flex flex-col bg-card border-t lg:border-t-0 lg:border-l border-border h-[400px] lg:h-full min-h-0">
+      <div className="w-full lg:w-[420px] flex flex-col bg-card border-t lg:border-t-0 lg:border-l border-border flex-1 min-h-[320px] lg:h-full">
         {/* Author Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <Link href={`/@${post.user.username}`} className="flex items-center gap-3 group">

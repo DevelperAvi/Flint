@@ -38,7 +38,7 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-1 lg:ml-60 pt-4 flex justify-center px-4 pb-24 lg:pb-8">
+      <main className="flex-1 lg:ml-60 pt-14 lg:pt-4 flex justify-center px-2 sm:px-4 pb-24 lg:pb-8">
         <div className="w-full max-w-[468px]">
           {/* Stories bar placeholder */}
           <StoriesBar />

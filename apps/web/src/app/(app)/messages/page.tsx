@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Send, Image as ImageIcon, Smile, MoreVertical,
-  Check, CheckCheck, Phone, Video, ShieldCheck, Flame,
+  Check, CheckCheck, Phone, Video, ShieldCheck, Flame, ArrowLeft,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -120,6 +120,7 @@ export default function MessagesPage() {
   const { user } = useAuthStore();
   const [conversations, setConversations] = useState<Conversation[]>(INITIAL_CONVERSATIONS);
   const [activeConvId, setActiveConvId] = useState<string>('conv_1');
+  const [mobileChatOpen, setMobileChatOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [inputText, setInputText] = useState('');
 
@@ -160,9 +161,14 @@ export default function MessagesPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] max-w-6xl mx-auto border border-border rounded-2xl overflow-hidden bg-background/60 backdrop-blur-xl shadow-2xl mt-4 mb-8">
+    <div className="flex h-[calc(100dvh-7.5rem)] md:h-[calc(100vh-4rem)] max-w-6xl mx-auto md:border border-border md:rounded-2xl overflow-hidden bg-background/60 backdrop-blur-xl shadow-2xl my-2 md:my-4">
       {/* Sidebar: Conversations List */}
-      <div className="w-80 md:w-96 border-r border-border flex flex-col bg-card/40">
+      <div
+        className={cn(
+          'w-full md:w-80 lg:w-96 border-r border-border flex flex-col bg-card/40 flex-shrink-0',
+          mobileChatOpen ? 'hidden md:flex' : 'flex'
+        )}
+      >
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -194,10 +200,13 @@ export default function MessagesPage() {
             return (
               <button
                 key={c.id}
-                onClick={() => setActiveConvId(c.id)}
+                onClick={() => {
+                  setActiveConvId(c.id);
+                  setMobileChatOpen(true);
+                }}
                 className={cn(
                   'w-full p-4 flex items-center gap-3.5 text-left transition-colors hover:bg-secondary/40',
-                  isActive && 'bg-secondary/70 border-l-4 border-spark-500'
+                  isActive && 'bg-secondary/70 md:border-l-4 md:border-spark-500'
                 )}
               >
                 <div className="relative flex-shrink-0">
@@ -239,24 +248,36 @@ export default function MessagesPage() {
 
       {/* Main Chat Area */}
       {activeConv ? (
-        <div className="flex-1 flex flex-col bg-background/40">
+        <div
+          className={cn(
+            'flex-1 flex flex-col bg-background/40 min-w-0',
+            !mobileChatOpen ? 'hidden md:flex' : 'flex'
+          )}
+        >
           {/* Chat Header */}
-          <div className="p-4 border-b border-border flex items-center justify-between bg-card/30">
-            <div className="flex items-center gap-3">
-              <Avatar className="w-10 h-10 ring-1 ring-border/60">
+          <div className="p-3.5 sm:p-4 border-b border-border flex items-center justify-between bg-card/30">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <button
+                onClick={() => setMobileChatOpen(false)}
+                className="md:hidden p-1.5 -ml-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-secondary/60 transition-colors"
+                aria-label="Back to conversations"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <Avatar className="w-9 h-9 sm:w-10 sm:h-10 ring-1 ring-border/60 flex-shrink-0">
                 <AvatarImage src={activeConv.user.avatarUrl} alt={activeConv.user.displayName} />
                 <AvatarFallback>{activeConv.user.displayName[0]}</AvatarFallback>
               </Avatar>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-sm text-foreground">
+                  <span className="font-semibold text-sm text-foreground truncate">
                     {activeConv.user.displayName}
                   </span>
                   {activeConv.user.isVerified && (
-                    <ShieldCheck className="w-3.5 h-3.5 text-spark-500" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-spark-500 flex-shrink-0" />
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground truncate">
                   @{activeConv.user.username} • {activeConv.user.isOnline ? 'Online now' : 'Offline'}
                 </p>
               </div>
@@ -349,7 +370,7 @@ export default function MessagesPage() {
           </form>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
+        <div className="hidden md:flex flex-1 flex-col items-center justify-center p-8 text-center text-muted-foreground">
           <Flame className="w-12 h-12 text-spark-500/40 mb-3" />
           <h2 className="text-lg font-semibold text-foreground">Select a conversation</h2>
           <p className="text-sm mt-1">Choose a chat from the left to start messaging</p>

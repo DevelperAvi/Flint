@@ -162,6 +162,7 @@ export default function LoginPage() {
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-sm"
       >
         <Suspense fallback={<div className="text-center text-muted-foreground">Loading...</div>}>
           <LoginForm />

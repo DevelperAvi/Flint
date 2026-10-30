@@ -21,7 +21,7 @@ export default function PostPage({ params }: PostPageProps) {
         </Link>
       </div>
 
-      <div className="h-[75vh] min-h-[500px] bg-card border border-border rounded-2xl overflow-hidden shadow-xl">
+      <div className="min-h-[500px] lg:h-[75vh] bg-card border border-border rounded-2xl overflow-hidden shadow-xl">
         <PostDetailContent postId={params.id} />
       </div>
     </div>

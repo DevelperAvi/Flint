@@ -151,32 +151,110 @@ export function Sidebar() {
         </div>
       </motion.nav>
 
+      {/* Mobile Top App Bar */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-background/90 backdrop-blur-md border-b border-border flex items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 spark-gradient rounded-xl flex items-center justify-center shadow-md shadow-spark-500/20 group-hover:scale-105 transition-transform">
+            <Flame className="w-4 h-4 text-white" strokeWidth={2.5} />
+          </div>
+          <span className="text-lg font-bold font-display spark-text">Flint</span>
+        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/messages"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            aria-label="Messages"
+          >
+            <MessageCircle className="w-5 h-5" />
+          </Link>
+          {isAuthenticated && user && (
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              aria-label="Log out"
+              title="Log out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </header>
+
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-strong border-t border-border">
-        <div className="flex items-center justify-around px-2 py-2 safe-area-pb">
-          {navItems.slice(0, 5).map((item) => {
-            const isActive = item.href ? pathname === item.href : false;
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.label}
-                onClick={item.action ?? (() => item.href && (window.location.href = item.href))}
-                className={cn(
-                  'relative flex flex-col items-center gap-0.5 p-3 rounded-xl transition-all duration-150',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
-                {item.badge && item.badge > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-4 h-4 text-[10px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                    {item.badge > 9 ? '9+' : item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border">
+        <div className="flex items-center justify-around px-2 py-1.5 safe-area-pb">
+          {/* 1. Home */}
+          <Link
+            href="/"
+            className={cn(
+              'flex flex-col items-center justify-center p-2.5 rounded-xl transition-colors',
+              pathname === '/' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+            aria-label="Home"
+          >
+            <Home className="w-5 h-5" strokeWidth={pathname === '/' ? 2.5 : 1.8} />
+          </Link>
+
+          {/* 2. Explore / Search */}
+          <Link
+            href="/explore"
+            className={cn(
+              'flex flex-col items-center justify-center p-2.5 rounded-xl transition-colors',
+              pathname === '/explore' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+            aria-label="Explore"
+          >
+            <Search className="w-5 h-5" strokeWidth={pathname === '/explore' ? 2.5 : 1.8} />
+          </Link>
+
+          {/* 3. Center Create Post Button */}
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="relative -top-2.5 flex items-center justify-center w-11 h-11 rounded-2xl spark-gradient text-white shadow-lg shadow-spark-500/35 active:scale-95 transition-transform"
+            aria-label="Create Post"
+          >
+            <PlusSquare className="w-5 h-5" strokeWidth={2.4} />
+          </button>
+
+          {/* 4. Notifications */}
+          <Link
+            href="/notifications"
+            className={cn(
+              'relative flex flex-col items-center justify-center p-2.5 rounded-xl transition-colors',
+              pathname === '/notifications' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+            )}
+            aria-label="Notifications"
+          >
+            <Bell className="w-5 h-5" strokeWidth={pathname === '/notifications' ? 2.5 : 1.8} />
+            {unreadCount?.data?.count && unreadCount.data.count > 0 ? (
+              <span className="absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                {unreadCount.data.count > 9 ? '9+' : unreadCount.data.count}
+              </span>
+            ) : null}
+          </Link>
+
+          {/* 5. Profile */}
+          <Link
+            href={user ? `/@${user.username}` : '/login'}
+            className={cn(
+              'flex flex-col items-center justify-center p-2 rounded-xl transition-colors',
+              pathname.startsWith('/@') || pathname === '/login'
+                ? 'text-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            )}
+            aria-label="Profile"
+          >
+            {user?.avatarUrl ? (
+              <Avatar className={cn('w-6 h-6 ring-2 transition-all', pathname.startsWith('/@') ? 'ring-primary' : 'ring-transparent')}>
+                <AvatarImage src={user.avatarUrl} alt={user.username} />
+                <AvatarFallback className="text-[10px] font-bold bg-spark-500/20 text-spark-400">
+                  {user.username[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            ) : (
+              <User className="w-5 h-5" strokeWidth={pathname.startsWith('/@') || pathname === '/login' ? 2.5 : 1.8} />
+            )}
+          </Link>
         </div>
       </nav>
 

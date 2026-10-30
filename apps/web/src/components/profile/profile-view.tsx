@@ -99,7 +99,7 @@ export function ProfileView({ username }: ProfileViewProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8"
+        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8 mb-6 sm:mb-8 text-center sm:text-left"
       >
         {/* Avatar */}
         <div className="relative">
@@ -119,25 +119,25 @@ export function ProfileView({ username }: ProfileViewProps) {
         </div>
 
         {/* Profile info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 flex-wrap mb-3">
-            <h1 className="text-xl font-bold">
+        <div className="flex-1 min-w-0 w-full sm:w-auto">
+          <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap mb-1 sm:mb-2">
+            <h1 className="text-xl sm:text-2xl font-bold">
               {profile.displayName || profile.username}
             </h1>
             {profile.isVerified && (
               <BadgeCheck className="w-5 h-5 text-primary flex-shrink-0" />
             )}
           </div>
-          <p className="text-sm text-muted-foreground mb-3">@{profile.username}</p>
+          <p className="text-sm text-muted-foreground mb-3 sm:mb-4">@{profile.username}</p>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center justify-center sm:justify-start gap-2 mb-4 w-full">
             {isOwnProfile ? (
               <>
-                <Link href="/settings/profile" className="btn-ghost border border-border flex-1 justify-center" id="edit-profile-btn">
+                <Link href="/settings/profile" className="btn-ghost border border-border flex-1 max-w-[200px] justify-center text-sm py-2" id="edit-profile-btn">
                   Edit Profile
                 </Link>
-                <Link href="/settings" className="btn-ghost border border-border px-3">
+                <Link href="/settings" className="btn-ghost border border-border px-3 py-2">
                   <Settings className="w-4 h-4" />
                 </Link>
               </>
@@ -148,7 +148,7 @@ export function ProfileView({ username }: ProfileViewProps) {
                   disabled={followMutation.isPending}
                   whileTap={{ scale: 0.97 }}
                   className={cn(
-                    'flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all',
+                    'flex items-center justify-center gap-2 px-6 py-2 rounded-xl text-sm font-semibold transition-all w-full sm:w-auto',
                     profile.isFollowing
                       ? 'border border-border text-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30'
                       : 'btn-spark'
@@ -165,7 +165,7 @@ export function ProfileView({ username }: ProfileViewProps) {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center justify-around sm:justify-start gap-4 sm:gap-8 w-full border-y sm:border-y-0 border-border/70 py-3 sm:py-0">
             {[
               { label: 'posts', value: profile.postsCount },
               { label: 'followers', value: profile.followersCount, href: `/@${username}/followers` },
@@ -187,7 +187,7 @@ export function ProfileView({ username }: ProfileViewProps) {
 
           {/* Bio */}
           {profile.bio && (
-            <p className="text-sm leading-relaxed mt-3 text-foreground/90 max-w-sm">
+            <p className="text-sm leading-relaxed mt-3 text-foreground/90 max-w-sm mx-auto sm:mx-0">
               {profile.bio}
             </p>
           )}
@@ -197,7 +197,7 @@ export function ProfileView({ username }: ProfileViewProps) {
               href={profile.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-primary hover:underline mt-1.5"
+              className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-primary hover:underline mt-1.5 mx-auto sm:mx-0"
             >
               <LinkIcon className="w-3.5 h-3.5" />
               {profile.website.replace(/^https?:\/\//, '')}

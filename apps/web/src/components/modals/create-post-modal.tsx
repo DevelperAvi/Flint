@@ -162,19 +162,19 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100%-1.25rem)] sm:w-full max-w-lg max-h-[92vh] flex flex-col my-auto"
           >
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 border-b border-border flex-shrink-0 bg-card">
                 {step === 'edit' && (
-                  <button onClick={() => setStep('upload')} className="btn-ghost p-2 -ml-2">
+                  <button onClick={() => setStep('upload')} className="btn-ghost p-2 -ml-2 touch-manipulation">
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                 )}
                 {step !== 'edit' && <div />}
 
-                <Dialog.Title className="text-base font-semibold font-display">
+                <Dialog.Title className="text-sm sm:text-base font-semibold font-display">
                   {step === 'upload' && 'Create Post'}
                   {step === 'edit' && 'Edit & Publish'}
                   {step === 'publishing' && 'Publishing...'}
@@ -185,7 +185,7 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                   <Dialog.Close asChild>
                     <button
                       onClick={handleClose}
-                      className="btn-ghost p-2 -mr-2 text-muted-foreground"
+                      className="btn-ghost p-2 -mr-2 text-muted-foreground touch-manipulation"
                       aria-label="Close modal"
                       id="close-create-post-modal"
                     >
@@ -195,148 +195,149 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                 )}
               </div>
 
-              <AnimatePresence mode="wait">
-                {/* ── Upload Step ──────────────────────────────────────── */}
-                {step === 'upload' && (
-                  <motion.div
-                    key="upload"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="p-6"
-                  >
-                    <div
-                      {...getRootProps()}
-                      className={cn(
-                        'border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-200 cursor-pointer',
-                        isDragActive
-                          ? 'border-primary bg-primary/5 scale-[1.01]'
-                          : 'border-border hover:border-primary/40 hover:bg-secondary/50'
-                      )}
+              <div className="flex-1 overflow-y-auto">
+                <AnimatePresence mode="wait">
+                  {/* ── Upload Step ──────────────────────────────────────── */}
+                  {step === 'upload' && (
+                    <motion.div
+                      key="upload"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="p-4 sm:p-6"
                     >
-                      <input {...getInputProps()} id="media-file-input" />
-                      <motion.div
-                        animate={isDragActive ? { scale: 1.1 } : { scale: 1 }}
-                        className="flex flex-col items-center gap-4"
+                      <div
+                        {...getRootProps()}
+                        className={cn(
+                          'border-2 border-dashed rounded-2xl p-6 sm:p-12 text-center transition-all duration-200 cursor-pointer touch-manipulation',
+                          isDragActive
+                            ? 'border-primary bg-primary/5 scale-[1.01]'
+                            : 'border-border hover:border-primary/40 hover:bg-secondary/50'
+                        )}
                       >
-                        <div className="w-16 h-16 rounded-2xl bg-spark-gradient flex items-center justify-center shadow-lg shadow-spark-500/20">
-                          <Upload className="w-7 h-7 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-base font-semibold mb-1">
-                            {isDragActive ? 'Drop it here!' : 'Drag & drop media'}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            or click to browse files
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-2">
-                            JPEG, WebP, PNG, MP4, WebM — up to 100MB
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-3 text-muted-foreground">
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <ImageIcon className="w-3.5 h-3.5" />
-                            <span>Photos</span>
+                        <input {...getInputProps()} id="media-file-input" />
+                        <motion.div
+                          animate={isDragActive ? { scale: 1.1 } : { scale: 1 }}
+                          className="flex flex-col items-center gap-3 sm:gap-4"
+                        >
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-spark-gradient flex items-center justify-center shadow-lg shadow-spark-500/20">
+                            <Upload className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                           </div>
-                          <div className="w-px h-4 bg-border" />
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <Video className="w-3.5 h-3.5" />
-                            <span>Videos</span>
+                          <div>
+                            <p className="text-sm sm:text-base font-semibold mb-1">
+                              {isDragActive ? 'Drop it here!' : 'Drag & drop media'}
+                            </p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              or tap to browse files
+                            </p>
+                            <p className="text-[11px] sm:text-xs text-muted-foreground mt-2">
+                              JPEG, WebP, PNG, MP4, WebM — up to 100MB
+                            </p>
                           </div>
-                        </div>
-                      </motion.div>
-                    </div>
-
-                    {error && (
-                      <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        {error}
+                          <div className="flex items-center gap-3 text-muted-foreground">
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <ImageIcon className="w-3.5 h-3.5" />
+                              <span>Photos</span>
+                            </div>
+                            <div className="w-px h-4 bg-border" />
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <Video className="w-3.5 h-3.5" />
+                              <span>Videos</span>
+                            </div>
+                          </div>
+                        </motion.div>
                       </div>
-                    )}
-                  </motion.div>
-                )}
 
-                {/* ── Edit Step ────────────────────────────────────────── */}
-                {step === 'edit' && preview && (
-                  <motion.div
-                    key="edit"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="p-5 space-y-5"
-                  >
-                    {/* Media preview */}
-                    <div className={cn('rounded-xl overflow-hidden bg-secondary relative w-full', aspectClass[aspectRatio])}>
-                      {isVideo ? (
-                        <video src={preview} muted autoPlay loop playsInline className="w-full h-full object-cover" />
-                      ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={preview} alt="Preview" className="w-full h-full object-cover" draggable={false} />
+                      {error && (
+                        <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
+                          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                          {error}
+                        </div>
                       )}
-                    </div>
+                    </motion.div>
+                  )}
 
-                    {/* Aspect ratio picker */}
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 block">
-                        Aspect Ratio
-                      </label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {ASPECT_RATIOS.map(({ value, label, icon: Icon, dims }) => (
-                          <button
-                            key={value}
-                            onClick={() => setAspectRatio(value)}
-                            id={`aspect-ratio-${value.toLowerCase()}`}
-                            className={cn(
-                              'flex flex-col items-center gap-1.5 py-3 rounded-xl border text-xs font-medium transition-all',
-                              aspectRatio === value
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
-                            )}
-                          >
-                            <Icon className="w-4 h-4" />
-                            <span>{label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Caption */}
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 block" htmlFor="post-caption">
-                        Caption
-                      </label>
-                      <textarea
-                        ref={captionRef}
-                        id="post-caption"
-                        value={caption}
-                        onChange={(e) => setCaption(e.target.value)}
-                        placeholder="Write a caption… add #hashtags to reach more people"
-                        maxLength={2200}
-                        rows={4}
-                        className="input-flint resize-none leading-relaxed"
-                      />
-                      <p className="text-xs text-muted-foreground text-right mt-1">
-                        {caption.length}/2200
-                      </p>
-                    </div>
-
-                    {error && (
-                      <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        {error}
-                      </div>
-                    )}
-
-                    <button
-                      onClick={handlePublish}
-                      className="btn-spark w-full py-3"
-                      id="publish-post-btn"
+                  {/* ── Edit Step ────────────────────────────────────────── */}
+                  {step === 'edit' && preview && (
+                    <motion.div
+                      key="edit"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="p-4 sm:p-5 space-y-4 sm:space-y-5"
                     >
-                      Share Post
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </motion.div>
-                )}
+                      {/* Media preview */}
+                      <div className={cn('rounded-xl overflow-hidden bg-secondary relative w-full max-h-[38vh] sm:max-h-[48vh] flex items-center justify-center', aspectClass[aspectRatio])}>
+                        {isVideo ? (
+                          <video src={preview} muted autoPlay loop playsInline className="w-full h-full object-cover" />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={preview} alt="Preview" className="w-full h-full object-cover" draggable={false} />
+                        )}
+                      </div>
+
+                      {/* Aspect ratio picker */}
+                      <div>
+                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 sm:mb-2 block">
+                          Aspect Ratio
+                        </label>
+                        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                          {ASPECT_RATIOS.map(({ value, label, icon: Icon }) => (
+                            <button
+                              key={value}
+                              onClick={() => setAspectRatio(value)}
+                              id={`aspect-ratio-${value.toLowerCase()}`}
+                              className={cn(
+                                'flex flex-col items-center gap-1 py-2 sm:py-3 px-1 rounded-xl border text-[11px] sm:text-xs font-medium transition-all touch-manipulation',
+                                aspectRatio === value
+                                  ? 'border-primary bg-primary/10 text-primary'
+                                  : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
+                              )}
+                            >
+                              <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span>{label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Caption */}
+                      <div>
+                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 sm:mb-2 block" htmlFor="post-caption">
+                          Caption
+                        </label>
+                        <textarea
+                          ref={captionRef}
+                          id="post-caption"
+                          value={caption}
+                          onChange={(e) => setCaption(e.target.value)}
+                          placeholder="Write a caption… add #hashtags"
+                          maxLength={2200}
+                          rows={3}
+                          className="input-flint resize-none leading-relaxed text-sm"
+                        />
+                        <p className="text-[11px] text-muted-foreground text-right mt-1">
+                          {caption.length}/2200
+                        </p>
+                      </div>
+
+                      {error && (
+                        <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
+                          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                          {error}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={handlePublish}
+                        className="btn-spark w-full py-3 text-sm sm:text-base font-semibold touch-manipulation active:scale-[0.98] transition-transform flex items-center justify-center gap-1.5"
+                        id="publish-post-btn"
+                      >
+                        Share Post
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </motion.div>
+                  )}
 
                 {/* ── Publishing Step ──────────────────────────────────── */}
                 {step === 'publishing' && (
@@ -407,6 +408,7 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
             </div>
           </motion.div>
         </Dialog.Content>

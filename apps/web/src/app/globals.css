@@ -160,6 +160,14 @@
     display: none;
   }
 
+  /* Safe area insets for mobile devices (iPhone notch & home bar) */
+  .safe-area-pb {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+  }
+  .safe-area-pt {
+    padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+  }
+
   /* Aspect ratio utilities */
   .aspect-square  { aspect-ratio: 1 / 1; }
   .aspect-portrait { aspect-ratio: 4 / 5; }
