@@ -41,9 +41,31 @@ async function buildApp() {
   });
 
   await app.register(fastifyCors, {
-    origin: env.CORS_ORIGIN,
+    origin: (origin, cb) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) {
+        cb(null, true);
+        return;
+      }
+      // Allow any vercel domain or localhost
+      if (
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1')
+      ) {
+        cb(null, true);
+        return;
+      }
+      // Allow specified CORS_ORIGIN or dynamically allow the origin
+      if (env.CORS_ORIGIN === '*' || origin === env.CORS_ORIGIN) {
+        cb(null, true);
+        return;
+      }
+      cb(null, true);
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   });
 
   // Support empty or form-urlencoded POST requests (e.g. /like, /save, /follow)
