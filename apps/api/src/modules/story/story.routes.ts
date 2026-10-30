@@ -36,3 +36,4 @@ export async function storyRoutes(fastify: FastifyInstance): Promise<void> {
     }
   );
 }
+
