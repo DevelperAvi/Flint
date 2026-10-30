@@ -156,17 +156,16 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
           />
         </Dialog.Overlay>
 
-        <Dialog.Content asChild>
+        <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 outline-none overflow-y-auto">
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 20 }}
+            exit={{ opacity: 0, scale: 0.96, y: 15 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100%-1.25rem)] sm:w-full max-w-lg max-h-[92vh] flex flex-col my-auto"
+            className="w-full max-w-lg max-h-[94dvh] sm:max-h-[88vh] bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col my-auto relative"
           >
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 border-b border-border flex-shrink-0 bg-card">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 border-b border-border flex-shrink-0 bg-card z-10">
                 {step === 'edit' && (
                   <button onClick={() => setStep('upload')} className="btn-ghost p-2 -ml-2 touch-manipulation">
                     <ChevronLeft className="w-5 h-5" />
@@ -264,21 +263,21 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      className="p-4 sm:p-5 space-y-4 sm:space-y-5"
+                      className="p-3.5 sm:p-5 space-y-3.5 sm:space-y-4"
                     >
                       {/* Media preview */}
-                      <div className={cn('rounded-xl overflow-hidden bg-secondary relative w-full max-h-[38vh] sm:max-h-[48vh] flex items-center justify-center', aspectClass[aspectRatio])}>
+                      <div className="rounded-xl overflow-hidden bg-black/70 relative w-full h-44 sm:h-56 max-h-[220px] sm:max-h-[300px] flex items-center justify-center flex-shrink-0 border border-border/50">
                         {isVideo ? (
-                          <video src={preview} muted autoPlay loop playsInline className="w-full h-full object-cover" />
+                          <video src={preview} muted autoPlay loop playsInline className="w-full h-full object-contain" />
                         ) : (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={preview} alt="Preview" className="w-full h-full object-cover" draggable={false} />
+                          <img src={preview} alt="Preview" className="w-full h-full object-contain" draggable={false} />
                         )}
                       </div>
 
                       {/* Aspect ratio picker */}
                       <div>
-                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 sm:mb-2 block">
+                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">
                           Aspect Ratio
                         </label>
                         <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
@@ -288,7 +287,7 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                               onClick={() => setAspectRatio(value)}
                               id={`aspect-ratio-${value.toLowerCase()}`}
                               className={cn(
-                                'flex flex-col items-center gap-1 py-2 sm:py-3 px-1 rounded-xl border text-[11px] sm:text-xs font-medium transition-all touch-manipulation',
+                                'flex flex-col items-center gap-1 py-1.5 sm:py-2.5 px-1 rounded-xl border text-[10px] sm:text-xs font-medium transition-all touch-manipulation',
                                 aspectRatio === value
                                   ? 'border-primary bg-primary/10 text-primary'
                                   : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
@@ -303,7 +302,7 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
 
                       {/* Caption */}
                       <div>
-                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 sm:mb-2 block" htmlFor="post-caption">
+                        <label className="text-[11px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1 block" htmlFor="post-caption">
                           Caption
                         </label>
                         <textarea
@@ -313,16 +312,16 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                           onChange={(e) => setCaption(e.target.value)}
                           placeholder="Write a caption… add #hashtags"
                           maxLength={2200}
-                          rows={3}
-                          className="input-flint resize-none leading-relaxed text-sm"
+                          rows={2}
+                          className="input-flint resize-none leading-relaxed text-sm py-2"
                         />
-                        <p className="text-[11px] text-muted-foreground text-right mt-1">
+                        <p className="text-[10px] text-muted-foreground text-right mt-0.5">
                           {caption.length}/2200
                         </p>
                       </div>
 
                       {error && (
-                        <div className="flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive text-sm">
+                        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-destructive/10 text-destructive text-xs">
                           <AlertCircle className="w-4 h-4 flex-shrink-0" />
                           {error}
                         </div>
@@ -330,7 +329,7 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
 
                       <button
                         onClick={handlePublish}
-                        className="btn-spark w-full py-3 text-sm sm:text-base font-semibold touch-manipulation active:scale-[0.98] transition-transform flex items-center justify-center gap-1.5"
+                        className="btn-spark w-full py-2.5 sm:py-3 text-sm sm:text-base font-semibold touch-manipulation active:scale-[0.98] transition-transform flex items-center justify-center gap-1.5 shadow-lg shadow-spark-500/25"
                         id="publish-post-btn"
                       >
                         Share Post
@@ -408,7 +407,6 @@ export function CreatePostModal({ open, onClose }: CreatePostModalProps) {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
             </div>
           </motion.div>
         </Dialog.Content>
