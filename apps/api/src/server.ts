@@ -146,7 +146,6 @@ async function buildApp() {
     version: '1.0.1',
     build: 'media-upload-v2',
   }));
-  }));
 
   // ── Routes ────────────────────────────────────────────────────────────────
   await app.register(authRoutes,         { prefix: '/api/v1/auth' });
