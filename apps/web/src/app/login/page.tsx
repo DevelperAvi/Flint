@@ -138,13 +138,6 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Demo Credentials Helper */}
-      <div className="mt-4 p-3 rounded-xl bg-card border border-border text-xs text-muted-foreground">
-        <p className="font-semibold text-foreground mb-1">Demo Accounts:</p>
-        <p>• <code className="text-primary">sarah_lens</code> / <code className="text-primary">Password123!</code></p>
-        <p>• <code className="text-primary">alex_creatives</code> / <code className="text-primary">Password123!</code></p>
-      </div>
-
       {/* Switch to Signup */}
       <p className="text-center text-sm text-muted-foreground mt-6">
         Don&apos;t have an account?{' '}
