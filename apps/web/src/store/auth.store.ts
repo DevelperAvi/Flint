@@ -141,9 +141,16 @@ export const useAuthStore = create<AuthState>()(
             lastActivity: now,
           });
           localStorage.setItem(AUTH_STORAGE_KEYS.LAST_ACTIVITY, now.toString());
-        } catch {
-          // Token verification failed or expired
-          await get().logout('timeout');
+        } catch (err: unknown) {
+          // Only force logout on a real 401 Unauthorized.
+          // Network/server errors should NOT clear the local session.
+          const status = (err as { response?: { status?: number } })?.response?.status;
+          if (status === 401) {
+            await get().logout('timeout');
+          } else {
+            // Server temporarily unavailable — keep user logged in locally
+            console.warn('[Flint] Could not verify session (server may be down):', err);
+          }
         } finally {
           set({ isLoading: false });
         }
